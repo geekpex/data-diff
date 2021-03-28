@@ -1,0 +1,103 @@
+CREATE TABLE user(
+	user_id BIGSERIAL PRIMARY KEY,
+	external_id TEXT NOT NULL,
+	external_source TEXT NOT NULL,
+	display_name TEXT NOT NULL,
+	email_address TEXT NOT NULL,
+	UNIQUE CONSTRAINT (external_id, external_source)
+);
+
+CREATE TABLE access_role(
+	access_role_name VARCHAR(20) PRIMARY KEY
+);
+
+CREATE TABLE user_access_roles(
+	user_id BIGINT REFERENCES user(user_id) ON DELETE CASCADE,
+	access_role_name VARCHAR(20) REFERENCES access_role(access_role_name) ON DELETE CASCADE,
+	PRIMARY KEY (user_id, access_role_name)
+);
+
+CREATE TABLE site_type (
+	site_type_id SMALLINT PRIMARY KEY,
+	type TEXT UNIQUE NOT NULL,
+	display_name TEXT UNIQUE NOT NULL 
+);
+
+CREATE TABLE site_type_access_roles (
+	site_type_id SMALLINT REFERENCES site_type(site_type_id) ON DELETE CASCADE,
+	access_role_name VARCHAR(20) REFERENCES access_role(access_role_name) ON DELETE CASCADE,
+	PRIMARY KEY (user_id, access_
+);
+
+e_evaluation_result_id BIGSERIAL PRIMARY KEY,
+    site_id BIGINT UNIQUE REFERENCES site(site_id) ON DELETE RESTRICT,
+    points NUMERIC NOT NULL,
+	certificate_issued BOOLEAN NOT NULL DEFAULT FALSE,
+
+CREATA TABLE site (
+	site_id BIGSERIAL PRIMARY KEY,
+	url TEXT NOT NULL,
+	version BIGINT NOT NULL DEFAULT 1,
+	site_type SMALLINT REFERENCES site_type(site_type_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE question_category (
+	question_category_id SMALLINT PRIMARY KEY,
+	category_name TEXT NOT NULL UNIQUE,
+	display_name TEXT NOT NULL UNIQUE,
+	weight NUMERIC NOT NULL DEFAULT 1
+);
+
+CREATE TABLE question_category_site_types (
+	question_category_id SMALLINT REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+	site_type_id SMALLINT REFERENCES site_type(site_type_id) ON DELETE CASCADE,
+	PRIMARY KEY (question_category_id, site_type_id)
+);
+
+CREATE TABLE question (
+	question_id BIGSERIAL PRIMARY KEY,
+	sort_num BIGINT NOT NULL DEFAULT 0,
+	question TEXT NOT NULL,
+	question_category_id SMALLINT NOT NULL REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+	weight NUMERIC NOT NULL DEFAULT 1,
+	enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE answer_type (
+	answer_type_id SMALLINT PRIMARY KEY,
+	type TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE prefilled_answer(
+	prefilled_answer_id BIGSERIAL PRIMARY KEY,
+	answer_type_id SMALLINT REFERENCES answer_type(answer_type_id),
+	sort_num BIGINT NOT NULL DEFAULT 0,
+	answtatus (
+	site_review_status_id SMALLINT PRIMARY KEY,
+	status TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE site_review (
+	site_review_id BIGSERIAL PRIMARY KEY,
+	site_id BIGINT REFERENCES site(site_id) ON DELETE RESTRICT,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+	user_id BIGINT REFERENCES users(user_id) ON DELETE RESTRICT,
+	status SMALLINT REFERENCES site_review_status(site_review_status_id) ON DELETE RESTRICT
+);
+
+CREATE TABLE answer (
+	answer_id BIGSERIAL PRIMARY KEY,
+	site_review_id BIGINT REFERENCES site_review(site_review_id) ON DELETE CASCADE,
+	question_id BIGINT REFERENCES question(question_id) ON DELETE RESTRICT,
+	value NUMERIC NOT NULL
+);
+
+CREATE TABLE site_evaluation_result (
+	site_evaluation_result_id BIGSERIAL PRIMARY KEY,
+	site_id BIGINT UNIQUE REFERENCES site(site_id) ON DELETE RESTRICT,
+	points NUMERIC NOT NULL,
+	certificate_issued BOOLEAN NOT NULL DEFAULT FALSE,
+	cut_off_points NUMERIC NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);

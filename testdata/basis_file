@@ -1,0 +1,16 @@
+stion_category_site_types (
+        question_category_id SMALLINT REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+        site_type_id SMALLINT REFERENCES site_type(site_type_id) ON DELETE CASCADE,
+        PRIMARY KEY (question_category_id, site_type_id)
+);
+
+CREATE TABLE question (
+        question_id BIGSERIAL PRIMARY KEY,
+        sort_num BIGINT NOT NULL DEFAULT 0,
+        question TEXT NOT NULL,
+        question_category_id SMALLINT NOT NULL REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+        weight NUMERIC NOT NULL DEFAULT 1,
+        enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE answer_t
