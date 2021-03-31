@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
+	"encoding/base64"
 	"strings"
 	"testing"
 
@@ -401,17 +401,44 @@ var (
 
 func init() {
 	var err error
-	signature, err = ioutil.ReadFile("testdata/basis_signature")
+	signature, err = base64.StdEncoding.DecodeString(signatureFileB64)
 	if err != nil {
-		panic(err)
+		panic("Failed to decode basis signature base64 encoding: " + err.Error())
 	}
 
-	basisFile, err = ioutil.ReadFile("testdata/basis_file")
+	basisFile, err = base64.StdEncoding.DecodeString(basisFileB64)
 	if err != nil {
-		panic(err)
+		panic("Failed to decode basis file base64 encoding: " + err.Error())
 	}
 }
 
+const (
+	signatureFileB64 = "AAAABwAAAAAAAACBAAAAAC2ry//spDMdirla+/gaC4EtUWhQx24cfwAAAIEAAABIAAAAACxM6X9tk7Q6mgo0hgtuT9OB6ZDJbZnWoAAAAMkAAABmAAAAABKqbn9daNHWNFr/ZOP6X8XhCQuyTC2UggAAAS8AAABmAAAAAANoaH/MEazbZtnrgMYQt3KOSRFviMb38wAAAZUAAABUAAAAAB/BRv/G9252GsKc1S+zExXphAW/lRKk9gAAAekAAAA2AAAAAC2ry//9PsUPI/pvY8zOqocqp0f/EKJXFAAAAh8AAAB/AAAAABGG878Km/PjNJcjJVATS+9NuAeWiHmDKg=="
+
+	basisFileB64 = "c3Rpb25fY2F0ZWdvcnlfc2l0ZV90eXBlcyAoDQogICAgICAgIHF1ZXN0aW9uX2NhdGVnb3J5X2lkIFNNQUxMSU5UIFJFRkVSRU5DRVMgcXVlc3Rpb25fY2F0ZWdvcnkocXVlc3Rpb25fY2F0ZWdvcnlfaWQpIE9OIERFTEVURSBDQVNDQURFLA0KICAgICAgICBzaXRlX3R5cGVfaWQgU01BTExJTlQgUkVGRVJFTkNFUyBzaXRlX3R5cGUoc2l0ZV90eXBlX2lkKSBPTiBERUxFVEUgQ0FTQ0FERSwNCiAgICAgICAgUFJJTUFSWSBLRVkgKHF1ZXN0aW9uX2NhdGVnb3J5X2lkLCBzaXRlX3R5cGVfaWQpDQopOw0KDQpDUkVBVEUgVEFCTEUgcXVlc3Rpb24gKA0KICAgICAgICBxdWVzdGlvbl9pZCBCSUdTRVJJQUwgUFJJTUFSWSBLRVksDQogICAgICAgIHNvcnRfbnVtIEJJR0lOVCBOT1QgTlVMTCBERUZBVUxUIDAsDQogICAgICAgIHF1ZXN0aW9uIFRFWFQgTk9UIE5VTEwsDQogICAgICAgIHF1ZXN0aW9uX2NhdGVnb3J5X2lkIFNNQUxMSU5UIE5PVCBOVUxMIFJFRkVSRU5DRVMgcXVlc3Rpb25fY2F0ZWdvcnkocXVlc3Rpb25fY2F0ZWdvcnlfaWQpIE9OIERFTEVURSBDQVNDQURFLA0KICAgICAgICB3ZWlnaHQgTlVNRVJJQyBOT1QgTlVMTCBERUZBVUxUIDEsDQogICAgICAgIGVuYWJsZWQgQk9PTEVBTiBOT1QgTlVMTCBERUZBVUxUIFRSVUUNCik7DQoNCkNSRUFURSBUQUJMRSBhbnN3ZXJfdA=="
+)
+
+/* Contents of basisFileB64 (note that line break characters are CRLF and not LF):
+stion_category_site_types (
+        question_category_id SMALLINT REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+        site_type_id SMALLINT REFERENCES site_type(site_type_id) ON DELETE CASCADE,
+        PRIMARY KEY (question_category_id, site_type_id)
+);
+
+CREATE TABLE question (
+        question_id BIGSERIAL PRIMARY KEY,
+        sort_num BIGINT NOT NULL DEFAULT 0,
+        question TEXT NOT NULL,
+        question_category_id SMALLINT NOT NULL REFERENCES question_category(question_category_id) ON DELETE CASCADE,
+        weight NUMERIC NOT NULL DEFAULT 1,
+        enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE answer_t
+*/
+
+// Just for easier checking of what each chunk contains
+/*
 const (
 	basisChunk1 = `stion_category_site_types (
         question_category_id SMALLINT REFERENCES question_category(question_category_id) ON DELETE C`
@@ -436,3 +463,4 @@ CREATE TABLE que`
 
 CREATE TABLE answer_t`
 )
+*/
